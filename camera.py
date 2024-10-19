@@ -7,7 +7,7 @@ import glob
 import os
 import pwd
 import grp
-from picamera import PiCamera
+from picamzero import Camera
 
 
 class PiCameraController:
@@ -22,7 +22,8 @@ class PiCameraController:
         self.cptr = Button(6, hold_time=1, bounce_time=0.1)  # Picture/Video Button - GPIO 6
 
         # Initialize camera and states
-        self.camera = None
+        self.camera = Camera()
+        self.camera.greyscale = True
         self.is_active_hdmi = False
         self.is_recording = False
         self.was_held = False
@@ -57,16 +58,14 @@ class PiCameraController:
             self.blue.on()
             self.green.off()
             print("Started HDMI")
-            self.camera = PiCamera()
-            self.camera.sensor_mode = 5
-            self.camera.framerate = 30
+            self.camera = Camera()
             self.camera.start_preview()
         else:
             print("Stopped HDMI")
             self.green.on()
             self.blue.off()
             if self.camera:
-                self.camera.close()
+                self.camera.stop_preview()
                 self.camera = None
             self.is_active_hdmi = False
 
@@ -83,7 +82,7 @@ class PiCameraController:
                 img_path = os.path.join(self.media_dir, img_name)
                 thumb_path = os.path.join(self.media_dir, img_name_thumb)
                 try:
-                    self.camera.capture(img_path)
+                    self.camera.take_photo(img_path)
                     self.thumbnail_picture(img_path, thumb_path)
                 except Exception as e:
                     print(f"Error capturing image: {e}")
