@@ -1,6 +1,6 @@
 # Raspberry Pi Camera Controller
 
-This project is a Python-based application that allows you to control a Raspberry Pi camera using physical buttons and LEDs connected to the GPIO pins. The application uses the `picamzero` library to capture images and videos, and the `gpiozero` library to handle button and LED control. You can toggle between different modes (image capture and video recording) and control basic camera functionality like HDMI output.
+This project is a Python-based application that allows you to control a Raspberry Pi camera using physical buttons connected to the GPIO pins with LEDs for feedback. The application uses the `picamzero` library to capture images and videos, and the `gpiozero` library to handle button and LED control. You can toggle between different modes (image capture and video recording) and control basic camera functionality with HDMI output to preview images.
 
 ## Features
 - **Capture Images**: Press a button to capture images, which are saved in the `media/` directory.

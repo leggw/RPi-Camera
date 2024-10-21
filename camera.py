@@ -1,4 +1,4 @@
-from gpiozero import Button, LED
+from gpiozero import Button
 from signal import pause
 from PIL import Image
 import subprocess
@@ -7,15 +7,16 @@ import glob
 import os
 import pwd
 import grp
+import shutil
 from picamzero import Camera
+from tm1637 import TM1637
 
 
 class PiCameraController:
     def __init__(self):
-        # Initialize LEDs
-        self.green = LED(13)  # Green Led - Pin Number: GPIO 13
-        self.blue = LED(19)   # Blue Led - Pin Number: GPIO 19
-        self.red = LED(26)    # Red Led - Pin Number: GPIO 26
+        # Seven segment display
+        self.display = TM1637(clk=21, dio=20)
+        self.display.brightness(1)
 
         # Initialize buttons
         self.btn = Button(5, hold_time=1, bounce_time=0.1)  # HDMI Button - GPIO 5
@@ -38,9 +39,21 @@ class PiCameraController:
         os.makedirs(self.media_dir, exist_ok=True)  # Ensure the media directory exists
 
         print(f"Ready-to-use. Media will be saved in: {self.media_dir}")
-        self.green.on()
-        self.blue.off()
-        self.red.off()
+
+        self.update_picture_count()
+    
+    def update_picture_count(self):
+        # Get the free space available
+        total, used, free = shutil.disk_usage("/")
+        
+        # Calculate remaining pictures (assuming each is 1.3 MB)
+        remaining_pictures = int(free / (1.3 * 1024 * 1024))  # Convert MB to bytes
+        self.display_number(remaining_pictures)
+
+    def display_number(self, number):
+        # Display the number of remaining pictures
+        digits = [int(d) for d in str(number).zfill(4)]
+        self.display.show(digits[:4])
 
     def change_file_permissions(self):
         try:
@@ -58,7 +71,6 @@ class PiCameraController:
             self.blue.on()
             self.green.off()
             print("Started HDMI")
-            self.camera = Camera()
             self.camera.start_preview()
         else:
             print("Stopped HDMI")
@@ -66,7 +78,6 @@ class PiCameraController:
             self.blue.off()
             if self.camera:
                 self.camera.stop_preview()
-                self.camera = None
             self.is_active_hdmi = False
 
     def capture(self):
