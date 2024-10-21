@@ -21,19 +21,23 @@ class CameraManager:
         except Exception as e:
             print(f"Error capturing image: {e}")
     
-    def record_video(self, video_path):
-        print(f"Recording video to: {video_path}")
+    def record_video(self):
+        datetime_object = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        video_counter = len(os.listdir(self.media_dir)) + 1
+        vid_name = f"im_{video_counter:04d}_{datetime_object}.mp4"
+        vid_path = os.path.join(self.media_dir, vid_name)
+        print(f"Recording video to: {vid_path}")
         try:
-            self.camera.start_recording(video_path)
+            self.camera.start_recording(vid_path, duration=10)
         except Exception as e:
             print(f"Error starting video recording: {e}")
         
-    def stop_video(self):
-        print("Stopping video recording")
-        try:
-            self.camera.stop_recording()
-        except Exception as e:
-            print(f"Error stopping video recording: {e}")
+    # def stop_video(self):
+    #     print("Stopping video recording")
+    #     try:
+    #         self.camera.stop_recording()
+    #     except Exception as e:
+    #         print(f"Error stopping video recording: {e}")
     
     def start_preview(self):
         self.camera.start_preview()
