@@ -5,7 +5,7 @@ import datetime
 class CameraManager:
     def __init__(self, media_dir):
         self.camera = Camera()
-        self.camera.greyscale = True
+        self.camera.greyscale = False
         self.media_dir = media_dir
         os.makedirs(self.media_dir, exist_ok=True)
         
@@ -21,14 +21,14 @@ class CameraManager:
         except Exception as e:
             print(f"Error capturing image: {e}")
     
-    def record_video(self):
+    def capture_video(self):
         datetime_object = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         video_counter = len(os.listdir(self.media_dir)) + 1
         vid_name = f"im_{video_counter:04d}_{datetime_object}.mp4"
         vid_path = os.path.join(self.media_dir, vid_name)
         print(f"Recording video to: {vid_path}")
         try:
-            self.camera.start_recording(vid_path, duration=10)
+            self.camera.record_video(vid_path, duration=10)
         except Exception as e:
             print(f"Error starting video recording: {e}")
         
